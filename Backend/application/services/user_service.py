@@ -1,27 +1,28 @@
+import uuid
+import bcrypt
 from persistence.repositories.user_repository import UserRepository
-from werkzeug.security import generate_password_hash
+from persistence.models.user import User
+from application.dtos.create_user_dto import CreateUserDto
 
 class UserService:
-    def __init__(self):
-        self.user_repository = UserRepository()
+    def __init__(self, user_repository: UserRepository):
+        self.user_repository = user_repository
 
-    def create_user(self, user_dto):
-        # Verifica se o usuário já existe
-        existing_user = self.user_repository.find_by_email(user_dto.email)
-        if existing_user:
-            raise ValueError("E-mail já cadastrado.")
-
+    def create_user(self, create_user_dto: CreateUserDto) -> User:
         # Criptografa a senha antes de salvar
-        hashed_password = generate_password_hash(user_dto.password)
+        hashed_password = bcrypt.hashpw(create_user_dto.senha.encode('utf-8'), bcrypt.gensalt())
 
-        user_data = {
-            "name": user_dto.name,
-            "email": user_dto.email,
-            "password_hash": hashed_password,
-            "cpf": user_dto.cpf,
-            "phone": user_dto.phone,
-            "address": user_dto.address
-        }
-
-        new_user = self.user_repository.save(user_data)
-        return new_user
+        # Cria uma instância do modelo User com os dados do DTO
+        new_user = User(
+            id=uuid.uuid4(),
+            nome=create_user_dto.nome,
+            cpf=create_user_dto.cpf,
+            email=create_user_dto.email,
+            telefone=create_user_dto.telefone,
+            endereco=create_user_dto.endereco,
+            senha=hashed_password.decode('utf-8'), # Salva a senha criptografada
+            data_nascimento=create_user_dto.data_nascimento,
+            tipo_usuario=create_user_dto.tipo_usuario
+        )
+        
+        return self.user_repository.save(new_user)

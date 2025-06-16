@@ -1,18 +1,18 @@
-class User:
-    def __init__(self, user_id, name, email, cpf, phone, address):
-        self.user_id = user_id
-        self.name = name
-        self.email = email
-        self.cpf = cpf
-        self.phone = phone
-        self.address = address
+# Backend/persistence/models/user.py
+from sqlalchemy import Column, String, Date, Text
+from sqlalchemy.dialects.postgresql import UUID
+import uuid
+from config.database import Base
 
-    def to_dict(self):
-        return {
-            "user_id": self.user_id,
-            "name": self.name,
-            "email": self.email,
-            "cpf": self.cpf,
-            "phone": self.phone,
-            "address": self.address
-        }
+class User(Base):
+    __tablename__ = 'usuarios'
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    nome = Column(Text, nullable=False)
+    cpf = Column(String(14), nullable=False, unique=True)
+    email = Column(Text, nullable=False, unique=True)
+    telefone = Column(Text, nullable=True)
+    endereco = Column(Text, nullable=False)
+    senha = Column(Text, nullable=False)
+    data_nascimento = Column(Date, nullable=False)
+    tipo_usuario = Column(Text, nullable=False)

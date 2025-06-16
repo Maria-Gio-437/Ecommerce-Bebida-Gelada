@@ -1,9 +1,12 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
+from datetime import date
 
-class CreateUserDTO(BaseModel):
-    name: str
-    email: EmailStr
-    password: str
+class CreateUserDto(BaseModel):
+    nome: str
     cpf: str
-    phone: str
-    address: str
+    email: str
+    telefone: str | None = None # Opcional
+    endereco: str
+    senha: str
+    data_nascimento: date
+    tipo_usuario: str
