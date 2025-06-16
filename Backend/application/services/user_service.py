@@ -1,8 +1,12 @@
 import uuid
 import bcrypt
+import jwt
+import os
 from persistence.repositories.user_repository import UserRepository
 from persistence.models.user import User
 from application.dtos.create_user_dto import CreateUserDto
+from werkzeug.security import check_password_hash
+from datetime import datetime, timedelta
 
 class UserService:
     def __init__(self, user_repository: UserRepository):
@@ -26,3 +30,19 @@ class UserService:
         )
         
         return self.user_repository.save(new_user)
+    
+class AuthService:
+    def __init__(self):
+        self.user_repository = UserRepository()
+
+    def login(self, email: str, senha: str):
+        user = self.user_repository.find_by_email(email)
+        if not user or not check_password_hash(user.senha, senha):
+            raise Exception("Credenciais inválidas")
+
+        payload = {
+            "sub": user.id,
+            "exp": datetime.utcnow() + timedelta(hours=2)
+        }
+        token = jwt.encode(payload, os.getenv("SECRET_KEY"), algorithm="HS256")
+        return {"access_token": token}

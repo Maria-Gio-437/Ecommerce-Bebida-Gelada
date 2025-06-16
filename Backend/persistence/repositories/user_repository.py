@@ -21,3 +21,6 @@ class UserRepository:
                 address=user_info.get('address')
             )
         return None
+    
+def find_by_email(self, email: str):
+    return self.session.query(User).filter_by(email=email).first()

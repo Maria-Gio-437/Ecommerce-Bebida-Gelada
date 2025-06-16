@@ -3,7 +3,8 @@ from application.services.user_service import UserService
 from application.dtos.create_user_dto import CreateUserDTO
 from pydantic import ValidationError
 
-user_service = UserService()
+from persistence.repositories.user_repository import UserRepository
+user_service = UserService(UserRepository())
 
 def create_user_controller():
     try:
