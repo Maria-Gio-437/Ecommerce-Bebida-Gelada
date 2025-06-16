@@ -1,30 +1,35 @@
-import os
 import sys
-from dotenv import load_dotenv
+import os
 
-# Encontrar os módulos
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-# Carregar as variáveis de ambiente do env
-load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '..', '.env'))
+# Adiciona o diretório raiz do projeto ao path para encontrar os módulos
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from config.database import supabase
 
-def check_database_connection():
-    print("Teste de conexão com supabase\n")
-
+def test_connection():
+    """
+    Tenta se conectar ao Supabase e realizar uma query simples.
+    """
+    print("Iniciando teste de conexão com o Supabase...")
     try:
-        response = supabase.client.from_('usuarios').select('id').limit(1).execute()
+        # Tenta buscar o primeiro usuário na tabela 'users' para verificar a conexão.
+        # Certifique-se de que a tabela 'users' existe no seu banco de dados Supabase.
+        response = supabase.table('usuarios').select('id').limit(1).execute()
 
-        if response.data:
-            print("Conexão com o Supabase bem-sucedida!")
-            print("Dados recebidos:", response.data)
-        else:
-            print("Falha na conexão com o Supabase.")
-            print("Detalhes do erro:", response)
+        # A API do Supabase retorna um objeto com 'data' e 'error'.
+        # Se 'error' não for None, algo deu errado.
+        if response.error:
+            print(f"Falha na conexão com o Supabase. Erro: {response.error.message}")
+            return False
+        
+        print("\n✅ Conexão com o Supabase bem-sucedida!")
+        print("✅ Query de teste executada com sucesso.")
+        return True
 
-    except Exception as errors:
-        print(f"Ocorreu um erro inesperado ao tentar conectar ao Supabase: {errors}")
+    except Exception as e:
+        # Captura outras exceções (ex: URL/Chave incorretas, problema de rede)
+        print(f"\n❌ Falha na conexão com o Supabase. Exceção: {e}")
+        return False
 
 if __name__ == "__main__":
-    check_database_connection()
+    test_connection()

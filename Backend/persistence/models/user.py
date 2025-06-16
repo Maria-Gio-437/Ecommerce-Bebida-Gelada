@@ -1,4 +1,3 @@
-# Backend/persistence/models/user.py
 from sqlalchemy import Column, String, Date, Text
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
