@@ -1,5 +1,9 @@
-Flask==2.3.3
-gunicorn==21.2.0
-python-dotenv==1.0.1
-requests==2.31.0
-supabase==1.0.3
+Flask==3.1.0
+SQLAlchemy==2.0.41
+psycopg2-binary==2.9.10
+Flask-SQLAlchemy==2.5.1
+python-dotenv==0.19.0
+PyJWT==3.0.0
+bcrypt==3.2.0
+gunicorn
+pydantic==1.8.2
