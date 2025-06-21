@@ -27,10 +27,3 @@ class UserService:
             return user
         
         raise ValueError("Email ou senha invalido")
-    
-    def get_all_users(self):
-        """
-        Retorna todos os usuários do repositório.
-        """
-        users = self.user_repository.get_all()
-        return users
