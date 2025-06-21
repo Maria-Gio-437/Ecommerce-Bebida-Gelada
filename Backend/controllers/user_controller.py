@@ -2,51 +2,51 @@ from flask import request, jsonify
 from application.services.user_service import UserService
 from application.dtos.create_user_dto import CreateUserDTO
 from application.dtos.login_dto import LoginDTO
-from pydantic import ValidationError
-from datetime import date, datetime
 
-user_service = UserService()
+class UserController:
+    def __init__(self):
+        self.user_service = UserService()
 
-def serialize_dates(data):
-    return {
-        k: (v.isoformat() if isinstance(v, (date, datetime)) else v)
-        for k, v in data.items()
-    }
+    def register(self):
+        try:
+            data = request.get_json()
+            required_fields = ['nome', 'email', 'senha', 'cpf', 'telefone', 'data_nascimento', 'tipo_usuario']
+            if not all(field in data for field in required_fields):
+                return jsonify({'error': 'Todos os campos são obrigatórios'}), 400
 
-def create_user_controller():
-    try:
-        user_data = CreateUserDTO(**request.json)
-        user_service = UserService()
-        new_user = user_service.create_user(user_data)
-        return jsonify(serialize_dates(new_user)), 201
-    except ValidationError as e:
-        return jsonify({"error": e.errors()}), 400
-    except ValueError as e:
-        return jsonify({"error": str(e)}), 409
-    except Exception as e:
-        return jsonify({"error": "An unexpected error occurred", "details": str(e)}), 500
+            user_dto = CreateUserDTO(**data)
+            new_user = self.user_service.create_user(user_dto)
+            
+            if 'senha' in new_user:
+                del new_user['senha']
 
-def login_user_controller():
-    try:
-        login_data = LoginDTO(**request.json)
-        user_service = UserService()
-        user = user_service.login_user(login_data)
-        return jsonify(serialize_dates(user))
-    except ValidationError as e:
-        return jsonify({"error": e.errors()}), 400
-    except ValueError as e:
-        return jsonify({"error": str(e)}), 401
-    except Exception as e:
-        return jsonify({"error": "An unexpected error occurred", "details": str(e)}), 500
+            return jsonify({'message': 'Usuário criado com sucesso', 'user': new_user}), 201
+        except Exception as e:
+            return jsonify({'error': str(e)}), 400
 
-def get_all_users():
-    """Controlador para lidar com a requisição de listar todos os usuários."""
-    try:
-        users = user_service.get_all_users()
-        if users is not None:
-            serialized = [serialize_dates(user) for user in users]
-            return jsonify(serialized), 200
-        else:
-            return jsonify({"message": "Nenhum usuário encontrado ou erro no servidor"}), 404
-    except Exception as e:
-        return jsonify({"message": "Erro interno no servidor", "error": str(e)}), 500
+    def login(self):
+        try:
+            data = request.get_json()
+            if not data or 'email' not in data or 'senha' not in data:
+                return jsonify({'error': 'Email e senha são obrigatórios'}), 400
+
+            login_dto = LoginDTO(email=data.get('email'), senha=data.get('senha'))
+            
+            # Esta linha retorna o objeto AuthResponse do Supabase
+            session = self.user_service.login(login_dto)
+
+            # Convertemos o objeto 'session' para um dicionário antes de passá-lo para jsonify
+            return jsonify(session.model_dump())
+
+        except Exception as e:
+            return jsonify({'error': str(e)}), 401
+
+    def get_all_users(self):
+        try:
+            users = self.user_service.get_all_users()
+            for user in users:
+                if 'senha' in user:
+                    del user['senha']
+            return jsonify(users), 200
+        except Exception as e:
+            return jsonify({'error': f'Ocorreu um erro: {str(e)}'}), 500

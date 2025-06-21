@@ -1,36 +1,59 @@
-import bcrypt
+from config.database import supabase
 from application.dtos.create_user_dto import CreateUserDTO
 from application.dtos.login_dto import LoginDTO
 from persistence.repositories.user_repository import UserRepository
+from werkzeug.security import generate_password_hash
 
 class UserService:
     def __init__(self):
         self.user_repository = UserRepository()
 
     def create_user(self, user_data: CreateUserDTO):
-        existing_user = self.user_repository.get_user_by_email(user_data.email)
-        if existing_user:
-            raise ValueError("Usuário com este e-mail já existe")
+        if self.user_repository.get_user_by_email(user_data.email):
+            raise ValueError('Um usuário com este e-mail já está cadastrado.')
 
-        hashed_senha = bcrypt.hashpw(user_data.senha.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-        
-        return self.user_repository.add_user(user_data, hashed_senha)
+        try:
+            print("--- TENTANDO REGISTRAR NO SUPABASE AUTH ---")
+            auth_response = supabase.auth.sign_up({
+                "email": user_data.email,
+                "password": user_data.senha,
+                "options": {
+                    "data": {
+                        'nome': user_data.nome,
+                        'tipo_usuario': user_data.tipo_usuario
+                    }
+                }
+            })
+            print("--- RESPOSTA DO SUPABASE (SIGN UP): ---")
+            print(auth_response)
 
-    def login_user(self, login_data: LoginDTO):
-        user = self.user_repository.get_user_by_email(login_data.email)
-        if not user:
-            raise ValueError("Email ou senha inválido")
+            if auth_response.user is None:
+                raise Exception("Falha ao criar usuário no serviço de autenticação do Supabase.")
 
-        if bcrypt.checkpw(login_data.senha.encode('utf-8'), user['senha'].encode('utf-8')):
-            # Remove a senha do dicionário antes de retornar por segurança
-            del user['senha']
-            return user
-        
-        raise ValueError("Email ou senha invalido")
-    
+        except Exception as e:
+            # --- DEPURAÇÃO DE ERRO ---
+            print(f"--- ERRO NO SIGN UP DO SUPABASE: {e} ---")
+            raise Exception(f"Erro no serviço de autenticação: {e}")
+
+        try:
+            hashed_senha = generate_password_hash(user_data.senha)
+            return self.user_repository.add_user(user_data, hashed_senha)
+        except Exception as e:
+            raise Exception(f"Erro ao salvar dados do usuário no banco de dados: {e}")
+
+    def login(self, login_data: LoginDTO):
+        try:
+            print("--- TENTANDO FAZER LOGIN NO SUPABASE AUTH ---")
+            session = supabase.auth.sign_in_with_password({
+                "email": login_data.email,
+                "password": login_data.senha
+            })
+            print("--- RESPOSTA DO SUPABASE (SIGN IN): ---")
+            print(session)
+            return session
+        except Exception as e:
+            print(f"--- ERRO NO SIGN IN DO SUPABASE: {e} ---")
+            raise Exception("Credenciais inválidas")
+            
     def get_all_users(self):
-        """
-        Retorna todos os usuários do repositório.
-        """
-        users = self.user_repository.get_all()
-        return users
+        return self.user_repository.get_all()
