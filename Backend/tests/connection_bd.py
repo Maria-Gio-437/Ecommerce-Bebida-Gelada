@@ -7,13 +7,9 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from config.database import supabase
 
 def test_connection():
-    """
-    Tenta se conectar ao Supabase e realizar uma query simples.
-    """
+    """Tenta se conectar ao Supabase e realizar uma query simples."""
     print("Iniciando teste de conexão com o Supabase...")
     try:
-        # Tenta buscar o primeiro usuário na tabela 'users' para verificar a conexão.
-        # Certifique-se de que a tabela 'users' existe no seu banco de dados Supabase.
         response = supabase.table('usuarios').select('id').limit(1).execute()
 
         # A API do Supabase retorna um objeto com 'data' e 'error'.

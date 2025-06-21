@@ -1,46 +1,22 @@
-# Getting Started with Create React App
+🍻 Beer – Plataforma de Delivery de Bebidas GeladasAdd commentMore actions
+Beer é uma aplicação web desenvolvida para atender pequenas empresas e empreendedores que desejam vender e entregar bebidas geladas com agilidade e praticidade. A plataforma foi pensada para funcionar tanto no desktop quanto em dispositivos móveis, oferecendo uma experiência de compra simples, rápida e eficiente para o cliente final.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+🚀 Propósito do Projeto
+O projeto surge como solução para um problema comum: a dificuldade de adquirir bebidas geladas de forma rápida, especialmente em momentos de urgência como encontros, festas ou eventos de última hora. Além de melhorar a experiência do consumidor, a aplicação oferece uma plataforma centralizada de gestão de pedidos, produtos, estoques e relatórios para o empreendedor.
 
-## Available Scripts
+🎯 Público-Alvo
+Empreendedores individuais ou pequenas empresas do setor de bebidas que desejam oferecer vendas via delivery de forma organizada, acessível e escalável.
 
-In the project directory, you can run:
+🏗️ Arquitetura Utilizada
+A aplicação foi desenvolvida com os seguintes estilos arquiteturais:
 
-### `npm start`
+Cliente-Servidor: separa a interface de usuário do backend.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Arquitetura em Camadas: divisão lógica entre apresentação, regras de negócio e acesso a dados.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+Orientada a Eventos (Pub/Sub): facilita notificações e ações assíncronas (como atualizações de status de pedidos).
 
-### `npm test`
+Orientada a Transações: garante integridade em ações críticas (como compras e cancelamentos).
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+⚠️ Aviso Legal
+Usuários menores de 18 anos não visualizarão bebidas alcoólicas. O sistema aplica filtros automáticos com base na data de nascimento informada no cadastro e impede a visualização e compra desses itens por menores.
