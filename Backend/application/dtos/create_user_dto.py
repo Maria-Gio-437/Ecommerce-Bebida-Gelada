@@ -6,7 +6,6 @@ class CreateUserDTO(BaseModel):
     cpf: str
     email: str
     telefone: str | None = None # Opcional
-    endereco: str
     senha: str
     data_nascimento: date
     tipo_usuario: str
