@@ -50,3 +50,15 @@ class UserController:
             return jsonify(users), 200
         except Exception as e:
             return jsonify({'error': f'Ocorreu um erro: {str(e)}'}), 500
+        
+    def forgot_password(self):
+        data = request.get_json()
+        if not data or not data.get('email'):
+            return jsonify({'error': 'O campo email é obrigatorio'}), 400
+
+        email = data.get('email')
+        self.user_service.send_password_reset_email(email)
+        
+        return jsonify({
+            'message': 'Se uma conta com este e-mail existir, um link para redefinicao de senha foi enviado.'
+        }), 200

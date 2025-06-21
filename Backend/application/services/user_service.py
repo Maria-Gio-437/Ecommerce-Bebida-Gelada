@@ -31,7 +31,6 @@ class UserService:
                 raise Exception("Falha ao criar usuário no serviço de autenticação do Supabase.")
 
         except Exception as e:
-            # --- DEPURAÇÃO DE ERRO ---
             print(f"--- ERRO NO SIGN UP DO SUPABASE: {e} ---")
             raise Exception(f"Erro no serviço de autenticação: {e}")
 
@@ -57,3 +56,11 @@ class UserService:
             
     def get_all_users(self):
         return self.user_repository.get_all()
+    
+    def send_password_reset_email(self, email: str):
+        try:
+            # Esta função instrui o Supabase a enviar o e-mail de recuperação.
+            supabase.auth.reset_password_for_email(email)
+        except Exception as e:
+            print(f"Tentativa de reset de senha para {email}. Erro (se houver): {e}")
+        return

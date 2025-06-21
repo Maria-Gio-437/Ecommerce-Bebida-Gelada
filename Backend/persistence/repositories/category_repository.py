@@ -25,7 +25,6 @@ class CategoryRepository:
             else:
                 raise Exception("Falha ao criar categoria: Nenhum dado retornado.")
         except Exception as e:
-            # Repassa a exceção para ser tratada no service/controller
             raise e
         
     def get_all(self):

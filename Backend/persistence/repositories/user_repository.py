@@ -32,9 +32,7 @@ class UserRepository:
         return None
     
     def get_all(self):
-        """
-        Busca todos os usuários da tabela 'usuarios'.
-        """
+        """ Busca todos os usuários da tabela 'usuarios'."""
         try:
             response = supabase.table('usuarios').select('id', 'nome', 'email', 'senha', 'telefone', 'cpf', 'data_nascimento','tipo_usuario','criado_em').execute()
             return response.data
