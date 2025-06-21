@@ -1,9 +1,8 @@
 Flask==3.1.0
-SQLAlchemy==2.0.41
 psycopg2-binary==2.9.10
-Flask-SQLAlchemy==2.5.1
 python-dotenv==0.19.0
-PyJWT==3.0.0
+PyJWT==2.10.1
 bcrypt==3.2.0
-gunicorn
-pydantic==1.8.2
+pydantic==2.11.7
+supabase==2.15.3
+pydantic[email]
