@@ -1,23 +1,27 @@
 from config.database import supabase
-from persistence.models.user import User
+from application.dtos.create_user_dto import CreateUserDTO
 
 class UserRepository:
-    def find_by_email(self, email: str):
-        response = supabase.table('users').select("*").eq('email', email).execute()
+    def get_user_by_email(self, email: str) -> dict | None:
+        """
+        Busca um usuário pelo email no banco de dados.
+        Retorna um dicionário se o usuário for encontrado, ou None caso contrário.
+        """
+        response = supabase.table('usuarios').select('*').eq('email', email).execute()
         if response.data:
             return response.data[0]
         return None
 
-    def save(self, user_data: dict):
-        response = supabase.table('users').insert(user_data).execute()
+    def add_user(self, user_data: CreateUserDTO, hashed_senha: str) -> dict:
+        """
+        Adiciona um novo usuário ao banco de dados.
+        Retorna um dicionário com os dados do usuário criado.
+        """
+        user_dict = user_data.dict()
+        user_dict['senha'] = hashed_senha
+        
+        response = supabase.table('usuarios').insert(user_dict).execute()
+        
         if response.data:
-            user_info = response.data[0]
-            return User(
-                user_id=user_info.get('id'),
-                name=user_info.get('name'),
-                email=user_info.get('email'),
-                cpf=user_info.get('cpf'),
-                phone=user_info.get('phone'),
-                address=user_info.get('address')
-            )
+            return response.data[0]
         return None

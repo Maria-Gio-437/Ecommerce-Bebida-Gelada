@@ -1,28 +1,29 @@
-import uuid
 import bcrypt
+from application.dtos.create_user_dto import CreateUserDTO
+from application.dtos.login_dto import LoginDTO
 from persistence.repositories.user_repository import UserRepository
-from persistence.models.user import User
-from application.dtos.create_user_dto import CreateUserDto
 
 class UserService:
-    def __init__(self, user_repository: UserRepository):
-        self.user_repository = user_repository
+    def __init__(self):
+        self.user_repository = UserRepository()
 
-    def create_user(self, create_user_dto: CreateUserDto) -> User:
-        # Criptografa a senha antes de salvar
-        hashed_password = bcrypt.hashpw(create_user_dto.senha.encode('utf-8'), bcrypt.gensalt())
+    def create_user(self, user_data: CreateUserDTO):
+        existing_user = self.user_repository.get_user_by_email(user_data.email)
+        if existing_user:
+            raise ValueError("Usuário com este e-mail já existe")
 
-        # Cria uma instância do modelo User com os dados do DTO
-        new_user = User(
-            id=uuid.uuid4(),
-            nome=create_user_dto.nome,
-            cpf=create_user_dto.cpf,
-            email=create_user_dto.email,
-            telefone=create_user_dto.telefone,
-            endereco=create_user_dto.endereco,
-            senha=hashed_password.decode('utf-8'), # Salva a senha criptografada
-            data_nascimento=create_user_dto.data_nascimento,
-            tipo_usuario=create_user_dto.tipo_usuario
-        )
+        hashed_senha = bcrypt.hashpw(user_data.senha.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
         
-        return self.user_repository.save(new_user)
+        return self.user_repository.add_user(user_data, hashed_senha)
+
+    def login_user(self, login_data: LoginDTO):
+        user = self.user_repository.get_user_by_email(login_data.email)
+        if not user:
+            raise ValueError("Email ou senha inválido")
+
+        if bcrypt.checkpw(login_data.senha.encode('utf-8'), user['senha'].encode('utf-8')):
+            # Remove a senha do dicionário antes de retornar por segurança
+            del user['senha']
+            return user
+        
+        raise ValueError("Email ou senha invalido")
