@@ -1,10 +1,18 @@
 from flask import Blueprint
-from controllers.user_controller import create_user_controller, login_user_controller, get_all_users
+from controllers.user_controller import UserController
 
-user_bp = Blueprint('user_bp', __name__)
+user_routes = Blueprint('user_routes', __name__)
 
-user_bp.route('/register', methods=['POST'])(create_user_controller)
+user_controller_instance = UserController()
 
-user_bp.route('/login', methods=['POST'])(login_user_controller)
+@user_routes.route('/register', methods=['POST'])
+def register():
+    return user_controller_instance.register()
 
-user_bp.route('/', methods=['GET'])(get_all_users)
+@user_routes.route('/login', methods=['POST'])
+def login():
+    return user_controller_instance.login()
+
+@user_routes.route('/', methods=['GET'])
+def get_all_users():
+    return user_controller_instance.get_all_users()
