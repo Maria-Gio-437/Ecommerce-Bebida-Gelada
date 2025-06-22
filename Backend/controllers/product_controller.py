@@ -54,3 +54,13 @@ class ProductController:
             return jsonify({'error': str(e)}), 400
         except Exception as e:
             return jsonify({'error': f"Ocorreu um erro: {e}"}), 500
+        
+    def delete(self, product_id: str, **kwargs):
+        try:
+            self.product_service.delete_product(product_id)
+            # Retorna uma resposta vazia com status 204 No Content, indicando sucesso.
+            return '', 204
+        except ValueError as e:
+            return jsonify({'error': str(e)}), 404
+        except Exception as e:
+            return jsonify({'error': f"Ocorreu um erro: {e}"}), 500

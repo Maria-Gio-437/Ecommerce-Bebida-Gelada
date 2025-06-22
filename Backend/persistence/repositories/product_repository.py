@@ -11,6 +11,14 @@ class ProductRepository:
             print(f"Erro ao verificar categoria: {e}")
             return False
 
+    def check_product_exists(self, product_id: str):
+        try:
+            response = supabase.table('produtos').select('id').eq('id', product_id).execute()
+            return bool(response.data)
+        except Exception as e:
+            print(f"Erro ao verificar produto: {e}")
+            return False
+
     def create(self, product_dto: CreateProductDTO):
         try:
             if not self.check_category_exists(product_dto.categoria_id):
@@ -47,6 +55,10 @@ class ProductRepository:
 
     def update(self, product_id: str, product_dto: UpdateProductDTO):
         try:
+            # Primeiro, verifica se o produto existe
+            if not self.check_product_exists(product_id):
+                raise ValueError(f"Produto com ID {product_id} não encontrado.")
+            
             update_data = product_dto.to_dict()
 
             if not update_data:
@@ -60,9 +72,29 @@ class ProductRepository:
             if response.data:
                 return response.data[0]
             else:
-                error_message = f"Falha ao atualizar o produto com ID {product_id}."
+                # A lógica de erro aqui pode ser refinada, pois um update pode não retornar dados mesmo se bem-sucedido
+                # dependendo da configuração do Supabase (`returning='minimal'`).
+                # Uma nova consulta poderia confirmar a atualização se necessário.
+                return {"message": "Atualização realizada com sucesso."}
+        except Exception as e:
+            raise e
+        
+    def delete(self, product_id: str):
+        try:
+            if not self.check_product_exists(product_id):
+                raise ValueError(f"Produto com ID {product_id} não encontrado.")
+
+            response = supabase.table('produtos').delete().eq('id', product_id).execute()
+
+            # Dados do item deletado
+            if response.data:
+                return response.data[0]
+            else:
+                # Se não houver dados, pode ser um erro ou o item já foi deletado
+                error_message = f"Falha ao deletar o produto com ID {product_id}."
                 if hasattr(response, 'error') and response.error:
                     error_message += f" Detalhes: {response.error.message}"
                 raise Exception(error_message)
+
         except Exception as e:
             raise e

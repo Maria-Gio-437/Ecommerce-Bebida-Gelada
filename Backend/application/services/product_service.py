@@ -23,3 +23,9 @@ class ProductService:
             return self.product_repository.update(product_id, product_dto)
         except Exception as e:
             raise e
+    
+    def delete_product(self, product_id: str):
+        try:
+            return self.product_repository.delete(product_id)
+        except Exception as e:
+            raise e
