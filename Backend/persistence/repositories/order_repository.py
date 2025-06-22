@@ -73,3 +73,30 @@ class OrderRepository:
         except Exception as e:
             # Propaga a exceção para ser tratada pela camada de serviço/controller
             raise e
+        
+    def get_by_id(self, order_id: str):
+        try:
+            # Busca o pedido e faz o join com itens e produtos
+            query = "*, pedido_itens(*, produtos(nome, descricao, volume))"
+            response = supabase.table('pedidos').select(query).eq('id', order_id).single().execute()
+            return response.data
+        except Exception as e:
+            raise e
+
+    def get_all_by_user_id(self, cliente_id: str):
+        try:
+            # Busca todos os pedidos de um usuário específico
+            query = "*, pedido_itens(*, produtos(nome))"
+            response = supabase.table('pedidos').select(query).eq('cliente_id', cliente_id).order('data_pedido', desc=True).execute()
+            return response.data
+        except Exception as e:
+            raise e
+
+    def get_all(self):
+        try:
+            # Busca todos os pedidos (para administradores) e anexa os dados do cliente
+            query = "*, cliente:cliente_id(nome, email), pedido_itens(*, produtos(nome))"
+            response = supabase.table('pedidos').select(query).order('data_pedido', desc=True).execute()
+            return response.data
+        except Exception as e:
+            raise e
