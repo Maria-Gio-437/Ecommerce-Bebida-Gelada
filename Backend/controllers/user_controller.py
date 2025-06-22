@@ -32,10 +32,8 @@ class UserController:
 
             login_dto = LoginDTO(email=data.get('email'), senha=data.get('senha'))
             
-            # Esta linha retorna o objeto AuthResponse do Supabase
             session = self.user_service.login(login_dto)
 
-            # Convertemos o objeto 'session' para um dicionário antes de passá-lo para jsonify
             return jsonify(session.model_dump())
 
         except Exception as e:

@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_cors import CORS
 from routes.user_routes import user_routes
-from routes.categories_routes import category_routes
+from routes.category_routes import category_routes
 from routes.product_routes import product_routes
 from datetime import date, datetime
 from flask.json.provider import DefaultJSONProvider
