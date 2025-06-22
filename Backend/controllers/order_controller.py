@@ -1,6 +1,7 @@
 from flask import request, jsonify
 from application.services.order_service import OrderService
 from application.dtos.create_order_dto import CreateOrderDTO
+from application.dtos.update_order_dto import UpdateOrderDTO
 
 class OrderController:
     def __init__(self):
@@ -8,7 +9,6 @@ class OrderController:
 
     def create(self, **kwargs):
         try:
-            # O usuário autenticado é passado pelo decorator auth_required
             user = kwargs.get('user')
             if not user:
                 return jsonify({'error': 'Usuário não autenticado.'}), 401
@@ -23,10 +23,10 @@ class OrderController:
             return jsonify(new_order), 201
 
         except ValueError as e:
-            return jsonify({'error': str(e)}), 400  # Erro de dados inválidos
+            return jsonify({'error': str(e)}), 400
         except Exception as e:
             return jsonify({'error': f"Ocorreu um erro: {e}"}), 500
-        
+
     def get_one(self, order_id: str, **kwargs):
         try:
             user = kwargs.get('user')
@@ -56,5 +56,22 @@ class OrderController:
                 orders = self.order_service.get_orders_by_user(user.id)
             
             return jsonify(orders), 200
+        except Exception as e:
+            return jsonify({'error': f"Ocorreu um erro: {e}"}), 500
+            
+    def update(self, order_id: str, **kwargs):
+        try:
+            user = kwargs.get('user')
+            data = request.get_json()
+            update_dto = UpdateOrderDTO(**data)
+            
+            updated_order = self.order_service.update_order_status(order_id, update_dto, user)
+            
+            return jsonify(updated_order), 200
+
+        except ValueError as e:
+            return jsonify({'error': str(e)}), 400 # Erro de dados ou regra de negócio
+        except PermissionError as e:
+            return jsonify({'error': str(e)}), 403 # Erro de permissão
         except Exception as e:
             return jsonify({'error': f"Ocorreu um erro: {e}"}), 500

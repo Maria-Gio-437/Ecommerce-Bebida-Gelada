@@ -19,3 +19,8 @@ def get_all_orders(**kwargs):
 @auth_required(allowed_roles=['administrador', 'atendente', 'cliente'])
 def get_order(order_id, **kwargs):
     return order_controller.get_one(str(order_id), **kwargs)
+
+@order_routes.route('/<uuid:order_id>', methods=['PUT'])
+@auth_required(allowed_roles=['administrador', 'atendente', 'cliente'])
+def update_order(order_id, **kwargs):
+    return order_controller.update(str(order_id), **kwargs)
