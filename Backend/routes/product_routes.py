@@ -14,3 +14,14 @@ def create_product(**kwargs):
 @product_routes.route('/', methods=['GET'])
 def list_products():
     return product_controller.list_all()
+
+@product_routes.route('/<uuid:product_id>', methods=['PUT'])
+@auth_required(allowed_roles=['administrador', 'atendente'])
+def update_product(product_id, **kwargs):
+    # A URL captura o product_id e o passa para o controller
+    return product_controller.update(str(product_id), **kwargs)
+
+@product_routes.route('/<uuid:product_id>', methods=['DELETE'])
+@auth_required(allowed_roles=['administrador']) # Apenas administradores podem deletar
+def delete_product(product_id, **kwargs):
+    return product_controller.delete(str(product_id), **kwargs)
