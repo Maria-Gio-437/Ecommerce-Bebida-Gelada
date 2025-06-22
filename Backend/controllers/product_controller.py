@@ -1,6 +1,7 @@
 from flask import request, jsonify
 from application.services.product_service import ProductService
 from application.dtos.create_product_dto import CreateProductDTO
+from application.dtos.update_product_dto import UpdateProductDTO
 
 class ProductController:
     def __init__(self):
@@ -42,3 +43,14 @@ class ProductController:
             return jsonify(products), 200
         except Exception as e:
             return jsonify({'error': str(e)}), 500
+        
+    def update(self, product_id: str, **kwargs):
+        try:
+            data = request.get_json()
+            product_dto = UpdateProductDTO(**data)
+            updated_product = self.product_service.update_product(product_id, product_dto)
+            return jsonify(updated_product), 200
+        except ValueError as e:
+            return jsonify({'error': str(e)}), 400
+        except Exception as e:
+            return jsonify({'error': f"Ocorreu um erro: {e}"}), 500

@@ -1,5 +1,6 @@
 from config.database import supabase
 from application.dtos.create_product_dto import CreateProductDTO
+from application.dtos.update_product_dto import UpdateProductDTO
 
 class ProductRepository:
     def check_category_exists(self, category_id: str):
@@ -43,3 +44,25 @@ class ProductRepository:
         except Exception as e:
             print(f"Erro ao buscar todos os produtos: {e}")
             raise Exception("Falha ao buscar produtos.")
+
+    def update(self, product_id: str, product_dto: UpdateProductDTO):
+        try:
+            update_data = product_dto.to_dict()
+
+            if not update_data:
+                raise ValueError("Nenhum dado fornecido para atualização.")
+
+            if 'categoria_id' in update_data and not self.check_category_exists(update_data['categoria_id']):
+                raise ValueError(f"A categoria com ID {update_data['categoria_id']} não existe.")
+
+            response = supabase.table('produtos').update(update_data).eq('id', product_id).execute()
+
+            if response.data:
+                return response.data[0]
+            else:
+                error_message = f"Falha ao atualizar o produto com ID {product_id}."
+                if hasattr(response, 'error') and response.error:
+                    error_message += f" Detalhes: {response.error.message}"
+                raise Exception(error_message)
+        except Exception as e:
+            raise e
