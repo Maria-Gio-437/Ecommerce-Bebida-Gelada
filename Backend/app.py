@@ -4,6 +4,7 @@ from routes.user_routes import user_routes
 from routes.category_routes import category_routes
 from routes.product_routes import product_routes
 from routes.order_routes import order_routes
+from routes.report_routes import report_routes
 from datetime import date, datetime
 from flask.json.provider import DefaultJSONProvider
 
@@ -22,6 +23,7 @@ app.register_blueprint(user_routes, url_prefix='/users')
 app.register_blueprint(category_routes, url_prefix='/categories')
 app.register_blueprint(product_routes, url_prefix='/products')
 app.register_blueprint(order_routes, url_prefix='/orders')
+app.register_blueprint(report_routes, url_prefix='/reports')
 
 @app.route("/")
 def hello_world():
