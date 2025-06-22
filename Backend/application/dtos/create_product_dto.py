@@ -1,4 +1,3 @@
-
 class CreateProductDTO:
     def __init__(self, nome: str, descricao: str, volume: str, preco: float, qtd_estoque: int, categoria_id: str, alcoolico: bool = False):
         # Validações básicas
