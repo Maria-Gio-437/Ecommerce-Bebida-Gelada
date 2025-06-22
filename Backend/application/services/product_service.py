@@ -1,5 +1,6 @@
 from persistence.repositories.product_repository import ProductRepository
 from application.dtos.create_product_dto import CreateProductDTO
+from application.dtos.update_product_dto import UpdateProductDTO
 
 class ProductService:
     def __init__(self):
@@ -14,5 +15,17 @@ class ProductService:
     def get_all_products(self):
         try:
             return self.product_repository.get_all()
+        except Exception as e:
+            raise e
+        
+    def update_product(self, product_id: str, product_dto: UpdateProductDTO):
+        try:
+            return self.product_repository.update(product_id, product_dto)
+        except Exception as e:
+            raise e
+    
+    def delete_product(self, product_id: str):
+        try:
+            return self.product_repository.delete(product_id)
         except Exception as e:
             raise e
