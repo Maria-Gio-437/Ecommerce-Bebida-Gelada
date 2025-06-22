@@ -50,20 +50,52 @@ const CartItemsContainer = styled.div`
 const CartItem = styled.div`
   display: flex;
   align-items: center;
-  padding: 15px;
-  border-bottom: 1px solid #e0e0e0;
+  padding: 20px;
+  border-bottom: 1px solid #e9ecef;
+  background: var(--color-white);
+  border-radius: 8px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border-color: var(--color-primary);
+  }
   
   &:last-child {
     border-bottom: none;
+    margin-bottom: 0;
   }
 `;
 
 const ItemImage = styled.div`
-  width: 80px;
-  height: 80px;
-  background-color: #f0f0f0;
-  margin-right: 15px;
+  width: 90px;
+  height: 90px;
+  background-color: #f8f9fa;
+  margin-right: 20px;
   flex-shrink: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid #e9ecef;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    border-color: var(--color-primary);
+    transform: scale(1.05);
+  }
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: all 0.3s ease;
+  }
+  
+  &:hover img {
+    transform: scale(1.1);
+  }
 `;
 
 const ItemInfo = styled.div`
@@ -131,40 +163,100 @@ const RemoveButton = styled.button`
 `;
 
 const CartSummary = styled.div`
-  background-color: #f8f8f8;
-  padding: 20px;
-  border-radius: 8px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  }
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
 `;
 
 const SummaryRow = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-bottom: 10px;
+  align-items: center;
+  margin-bottom: 12px;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--color-black);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    color: var(--color-primary);
+  }
   
   &:last-child {
     margin-top: 20px;
-    padding-top: 10px;
-    border-top: 1px solid #e0e0e0;
-    font-weight: bold;
-    font-size: 18px;
+    padding-top: 16px;
+    border-top: 2px solid var(--color-primary);
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--color-primary);
+    
+    &:hover {
+      color: var(--color-secondary);
+    }
   }
 `;
 
 const CheckoutButton = styled(Link)`
   display: block;
   width: 100%;
-  padding: 15px;
-  background-color: #4CAF50;
+  padding: 18px 24px;
+  background: linear-gradient(135deg, #38a169, #48bb78);
   color: white;
   text-align: center;
   text-decoration: none;
-  border-radius: 4px;
-  font-weight: bold;
-  margin-top: 20px;
-  transition: background-color 0.3s;
+  border-radius: 12px;
+  font-weight: 700;
+  margin-top: 24px;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 16px;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+  }
   
   &:hover {
-    background-color: #45a049;
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(220, 38, 38, 0.4);
+    
+    &::before {
+      left: 100%;
+    }
+  }
+  
+  &:active {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(220, 38, 38, 0.3);
   }
 `;
 
@@ -191,7 +283,7 @@ const Cart: React.FC<CartProps> = ({ items, onUpdateQuantity, onRemoveItem }) =>
   };
 
   const subtotal = calculateSubtotal();
-  const shipping = subtotal > 0 ? 10 : 0;
+  const shipping = subtotal > 0 ? 10 : 0; // Frete fixo de R$ 10
   const total = subtotal + shipping;
 
   return (
@@ -244,7 +336,7 @@ const Cart: React.FC<CartProps> = ({ items, onUpdateQuantity, onRemoveItem }) =>
             </SummaryRow>
             <SummaryRow>
               <span>Frete</span>
-              <span>R${shipping.toFixed(2)}</span>
+              <span>R$ {shipping.toFixed(2)}</span>
             </SummaryRow>
             <SummaryRow>
               <span>Total</span>

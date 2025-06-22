@@ -71,21 +71,21 @@ const Input = styled.input`
 
 const Button = styled.button`
   padding: 12px;
-  background-color: #4CAF50;
+  background: linear-gradient(135deg, #38a169, #48bb78);
   color: white;
   border: none;
   border-radius: 4px;
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
   
   &:hover {
-    background-color: #45a049;
+    background: linear-gradient(135deg, #2f855a, #38a169);
   }
   
   &:disabled {
-    background-color: #cccccc;
+    background: #cccccc;
     cursor: not-allowed;
   }
 `;
@@ -150,12 +150,12 @@ const LoginPage: React.FC = () => {
     // Verificar se o usuário é maior de idade
     const isAdult = age >= 18;
     
-    const success = await register(name, email, password, birthDateObj);
-    
-    if (success) {
+    try {
+      await register(name, email, password, birthDateObj);
       navigate(from);
-    } else {
-      setError('Erro ao criar conta. Por favor, tente novamente.');
+    } catch (error: any) {
+      const errorMessage = error.message || 'Erro ao criar conta. Por favor, tente novamente.';
+      setError(errorMessage);
     }
   };
   

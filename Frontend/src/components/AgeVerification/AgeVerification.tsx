@@ -46,12 +46,12 @@ const Button = styled.button<{ primary?: boolean }>`
   border-radius: 4px;
   cursor: pointer;
   font-weight: bold;
-  background-color: ${props => props.primary ? '#4CAF50' : '#f44336'};
+  background: ${props => props.primary ? 'linear-gradient(135deg, #38a169, #48bb78)' : '#f44336'};
   color: white;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
   
   &:hover {
-    background-color: ${props => props.primary ? '#45a049' : '#d32f2f'};
+    background: ${props => props.primary ? 'linear-gradient(135deg, #2f855a, #38a169)' : '#d32f2f'};
   }
 `;
 

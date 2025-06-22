@@ -4,150 +4,406 @@ import { useNavigate } from 'react-router-dom';
 import { CartItem } from '../Cart/Cart';
 
 const Container = styled.div`
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
   display: flex;
   flex-direction: column;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  min-height: 100vh;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="0.5" fill="%23000" opacity="0.02"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>') repeat;
+    pointer-events: none;
+  }
+`;
+
+const MainContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
   
   @media (min-width: 768px) {
     flex-direction: row;
-    gap: 30px;
+    gap: 60px;
   }
 `;
 
 const Title = styled.h1`
-  margin-bottom: 30px;
-  color: #333;
+  font-size: 42px;
+  font-weight: 700;
+  color: var(--color-black);
+  margin-bottom: 50px;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1px;
   width: 100%;
+  position: relative;
+  z-index: 1;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+    border-radius: 2px;
+  }
 `;
 
 const CheckoutForm = styled.div`
-  flex: 1;
-  margin-bottom: 30px;
+  flex: 3;
+  background: var(--color-white);
+  border-radius: 16px;
+  padding: 50px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  border: 1px solid #eee;
+  position: relative;
+  z-index: 1;
+  transition: all 0.3s ease;
   
-  @media (min-width: 768px) {
-    margin-bottom: 0;
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+  }
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    border-radius: 16px 16px 0 0;
+  }
+  
+  @media (max-width: 768px) {
+    padding: 30px 20px;
+    margin-bottom: 30px;
   }
 `;
 
 const FormSection = styled.div`
-  margin-bottom: 30px;
-  background-color: #f8f8f8;
-  padding: 20px;
-  border-radius: 8px;
+  margin-bottom: 40px;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
 `;
 
 const SectionTitle = styled.h2`
-  margin-bottom: 20px;
-  font-size: 18px;
-  color: #333;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--color-black);
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 3px solid var(--color-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 `;
 
 const InputGroup = styled.div`
-  margin-bottom: 15px;
+  margin-bottom: 24px;
 `;
 
 const Label = styled.label`
   display: block;
-  margin-bottom: 5px;
-  color: #666;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: var(--color-black);
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 `;
 
 const Input = styled.input`
   width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  padding: 16px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
   font-size: 16px;
+  background: var(--color-white);
+  color: var(--color-black);
+  transition: all 0.3s ease;
+  font-weight: 500;
+  position: relative;
+  
+  &:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1), 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+    background: #fafafa;
+  }
+  
+  &:valid {
+    border-color: #28a745;
+  }
+  
+  &::placeholder {
+    color: #adb5bd;
+    transition: all 0.3s ease;
+  }
+  
+  &:focus::placeholder {
+    opacity: 0.7;
+    transform: translateY(-2px);
+  }
 `;
 
 const Select = styled.select`
   width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  padding: 16px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
   font-size: 16px;
-  background-color: white;
+  background: var(--color-white);
+  color: var(--color-black);
+  transition: all 0.3s ease;
+  font-weight: 500;
+  cursor: pointer;
+  
+  &:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1), 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+    background: #fafafa;
+  }
+  
+  &:hover {
+    border-color: #ced4da;
+  }
 `;
 
 const OrderSummary = styled.div`
-  flex: 0 0 350px;
+  flex: 1;
+  position: sticky;
+  top: 40px;
+  height: fit-content;
+  min-width: 350px;
+  
+  @media (max-width: 768px) {
+    position: static;
+    min-width: auto;
+  }
 `;
 
 const SummaryCard = styled.div`
-  background-color: #f8f8f8;
-  padding: 20px;
-  border-radius: 8px;
-  position: sticky;
-  top: 20px;
+  background: var(--color-white);
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  border: 1px solid #eee;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+  }
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  }
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, transparent 0%, rgba(220, 38, 38, 0.02) 100%);
+    pointer-events: none;
+  }
 `;
 
-const SummaryTitle = styled.h2`
-  margin-bottom: 20px;
-  font-size: 18px;
-  color: #333;
+const SummaryTitle = styled.h3`
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--color-black);
+  margin-bottom: 24px;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 `;
 
 const SummaryItem = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-bottom: 10px;
-  font-size: 14px;
+  align-items: center;
+  margin-bottom: 12px;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--color-black);
   
   &:last-of-type {
-    margin-top: 15px;
-    padding-top: 15px;
-    border-top: 1px solid #ddd;
-    font-weight: bold;
-    font-size: 16px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 2px solid var(--color-primary);
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--color-primary);
   }
 `;
 
 const ItemsList = styled.div`
-  margin-bottom: 20px;
+  margin-bottom: 24px;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
 `;
 
 const Item = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-bottom: 10px;
-  font-size: 14px;
+  align-items: center;
+  margin-bottom: 16px;
+  padding: 12px 0;
+  font-size: 15px;
+  border-bottom: 1px solid #e9ecef;
+  
+  &:last-child {
+    margin-bottom: 0;
+    border-bottom: none;
+  }
 `;
 
 const ItemName = styled.span`
   flex: 1;
+  font-weight: 600;
+  color: var(--color-black);
 `;
 
 const ItemQuantity = styled.span`
-  color: #666;
-  margin: 0 10px;
+  color: #6c757d;
+  margin: 0 12px;
+  font-weight: 500;
+  background: #e9ecef;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 13px;
 `;
 
 const ItemPrice = styled.span`
-  font-weight: 500;
+  font-weight: 700;
+  color: var(--color-primary);
+  font-size: 16px;
 `;
 
 const PlaceOrderButton = styled.button`
   width: 100%;
-  padding: 15px;
-  background-color: #4CAF50;
-  color: white;
+  padding: 18px 32px;
+  background: linear-gradient(135deg, #38a169, #48bb78);
+  color: #ffffff;
   border: none;
-  border-radius: 4px;
-  font-size: 16px;
-  font-weight: bold;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: 700;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 24px;
+  position: relative;
+  overflow: hidden;
   
-  &:hover {
-    background-color: #45a049;
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+  }
+  
+  &:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(220, 38, 38, 0.4);
+    
+    &::before {
+      left: 100%;
+    }
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(220, 38, 38, 0.3);
   }
   
   &:disabled {
-    background-color: #cccccc;
+    background: #adb5bd;
     cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+    
+    &::before {
+      display: none;
+    }
   }
+`;
+
+const PaymentInfo = styled.div`
+  margin-top: 20px;
+  padding: 20px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 12px;
+  border-left: 4px solid var(--color-primary);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(220, 38, 38, 0.05) 0%, transparent 100%);
+    pointer-events: none;
+  }
+  
+  &:hover {
+    transform: translateX(4px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+`;
+
+const InfoIcon = styled.span`
+  font-size: 24px;
+`;
+
+const InfoText = styled.p`
+  margin: 0;
+  color: #495057;
+  font-weight: 500;
+  line-height: 1.5;
 `;
 
 interface CheckoutProps {
@@ -218,9 +474,9 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, onPlaceOrder }) => {
   const calculateSubtotal = () => {
     return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
   };
-  
+
   const subtotal = calculateSubtotal();
-  const shipping = 10;
+  const shipping = 10; // Frete fixo de R$ 10
   const total = subtotal + shipping;
   
   const isFormValid = () => {
@@ -247,11 +503,10 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, onPlaceOrder }) => {
   
   return (
     <Container>
-      <div style={{ width: '100%' }}>
-        <Title>Finalizar Compra</Title>
-      </div>
+      <Title>Finalizar Compra</Title>
       
-      <CheckoutForm>
+      <MainContent>
+        <CheckoutForm>
         <form onSubmit={handleSubmit}>
           <FormSection>
             <SectionTitle>Endereço de Entrega</SectionTitle>
@@ -371,23 +626,28 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, onPlaceOrder }) => {
             )}
             
             {paymentInfo.method === 'pix' && (
-              <div style={{ marginTop: '15px' }}>
-                <p>Após finalizar o pedido, você receberá um QR Code para pagamento via PIX.</p>
-              </div>
+              <PaymentInfo>
+                <InfoIcon>💳</InfoIcon>
+                <InfoText>Após finalizar o pedido, você receberá um QR Code para pagamento via PIX.</InfoText>
+              </PaymentInfo>
             )}
             
             {paymentInfo.method === 'boleto' && (
-              <div style={{ marginTop: '15px' }}>
-                <p>Após finalizar o pedido, você receberá o boleto para pagamento.</p>
-              </div>
+              <PaymentInfo>
+                <InfoIcon>📄</InfoIcon>
+                <InfoText>Após finalizar o pedido, você receberá o boleto para pagamento.</InfoText>
+              </PaymentInfo>
             )}
           </FormSection>
         </form>
-      </CheckoutForm>
-      
-      <OrderSummary>
+        </CheckoutForm>
+        
+        <OrderSummary>
         <SummaryCard>
           <SummaryTitle>Resumo do Pedido</SummaryTitle>
+          
+          
+
           
           <ItemsList>
             {cartItems.map(item => (
@@ -405,7 +665,7 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, onPlaceOrder }) => {
           </SummaryItem>
           <SummaryItem>
             <span>Frete</span>
-            <span>R${shipping.toFixed(2)}</span>
+            <span>R$ {shipping.toFixed(2)}</span>
           </SummaryItem>
           <SummaryItem>
             <span>Total</span>
@@ -420,7 +680,8 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, onPlaceOrder }) => {
             Finalizar Pedido
           </PlaceOrderButton>
         </SummaryCard>
-      </OrderSummary>
+        </OrderSummary>
+      </MainContent>
     </Container>
   );
 };

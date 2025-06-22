@@ -72,7 +72,7 @@ const ProductDetailPage: React.FC = () => {
   
   return (
     <Container>
-      <ProductDetail product={product} onAddToCart={handleAddToCart} />
+      <ProductDetail product={product} />
     </Container>
   );
 };

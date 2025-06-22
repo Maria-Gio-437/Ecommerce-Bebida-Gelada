@@ -14,6 +14,7 @@ import CartPage from './pages/CartPage/CartPage';
 import CheckoutPage from './pages/CheckoutPage/CheckoutPage';
 import OrderConfirmationPage from './pages/OrderConfirmationPage/OrderConfirmationPage';
 import OrdersPage from './pages/OrdersPage/OrdersPage';
+import OrderDetailPage from './pages/OrderDetailPage/OrderDetailPage';
 import LoginPage from './pages/LoginPage/LoginPage';
 
 // Contextos
@@ -69,7 +70,7 @@ function App() {
                   <AgeVerification onVerify={handleAgeVerification} />
                 )}
                 
-                <Header categories={categories} />
+                <Header />
                 
                 <MainContent>
                   <Routes>
@@ -80,6 +81,7 @@ function App() {
                     <Route path="/checkout" element={<CheckoutPage />} />
                     <Route path="/order-confirmation/:orderId" element={<OrderConfirmationPage />} />
                     <Route path="/orders" element={<OrdersPage />} />
+                    <Route path="/order/:orderId" element={<OrderDetailPage />} />
                     <Route path="/login" element={<LoginPage />} />
                   </Routes>
                 </MainContent>

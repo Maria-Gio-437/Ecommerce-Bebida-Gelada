@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import { useOrders } from '../../contexts/OrderContext';
 
 const Container = styled.div`
   max-width: 1200px;
@@ -29,15 +30,15 @@ const EmptyOrdersText = styled.p`
 const ShopNowButton = styled(Link)`
   display: inline-block;
   padding: 10px 20px;
-  background-color: #4CAF50;
+  background: linear-gradient(135deg, #38a169, #48bb78);
   color: white;
   text-decoration: none;
   border-radius: 4px;
   font-weight: bold;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
   
   &:hover {
-    background-color: #45a049;
+    background: linear-gradient(135deg, #2f855a, #38a169);
   }
 `;
 
@@ -157,18 +158,46 @@ const OrderTotal = styled.div`
 `;
 
 const ViewDetailsButton = styled(Link)`
-  display: inline-block;
-  padding: 8px 15px;
-  background-color: #4CAF50;
+  background-color: #007bff;
   color: white;
-  text-decoration: none;
+  padding: 8px 16px;
   border-radius: 4px;
+  text-decoration: none;
   font-size: 14px;
-  transition: background-color 0.3s;
+  font-weight: 500;
+  transition: background-color 0.2s;
+  margin-right: 10px;
   
   &:hover {
-    background-color: #45a049;
+    background-color: #0056b3;
   }
+`;
+
+const CancelButton = styled.button`
+  background-color: #dc3545;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  
+  &:hover {
+    background-color: #c82333;
+  }
+  
+  &:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+  }
+`;
+
+const OrderActions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
 `;
 
 export interface OrderItem {
@@ -181,6 +210,7 @@ export interface OrderItem {
 
 export interface Order {
   id: number;
+  userId: number;
   date: string;
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
   items: OrderItem[];
@@ -191,7 +221,13 @@ interface OrdersProps {
   orders: Order[];
 }
 
+interface OrdersComponentState {
+  cancellingOrderId: number | null;
+}
+
 const Orders: React.FC<OrdersProps> = ({ orders }) => {
+  const { cancelOrder } = useOrders();
+  const [cancellingOrderId, setCancellingOrderId] = useState<number | null>(null);
   const getStatusText = (status: string) => {
     switch (status) {
       case 'pending': return 'Pendente';
@@ -200,6 +236,33 @@ const Orders: React.FC<OrdersProps> = ({ orders }) => {
       case 'delivered': return 'Entregue';
       case 'cancelled': return 'Cancelado';
       default: return status;
+    }
+  };
+  
+  const canCancelOrder = (status: string) => {
+    return status === 'pending' || status === 'processing';
+  };
+  
+  const handleCancelOrder = async (orderId: number) => {
+    if (!window.confirm('Tem certeza que deseja cancelar este pedido?')) {
+      return;
+    }
+    
+    setCancellingOrderId(orderId);
+    
+    try {
+      const success = cancelOrder(orderId);
+      
+      if (success) {
+        alert('Pedido cancelado com sucesso!');
+      } else {
+        alert('Não foi possível cancelar o pedido.');
+      }
+    } catch (error) {
+      console.error('Erro ao cancelar pedido:', error);
+      alert('Ocorreu um erro ao cancelar o pedido.');
+    } finally {
+      setCancellingOrderId(null);
     }
   };
   
@@ -250,7 +313,17 @@ const Orders: React.FC<OrdersProps> = ({ orders }) => {
                 
                 <OrderSummary>
                   <OrderTotal>Total: R${order.total.toFixed(2)}</OrderTotal>
-                  <ViewDetailsButton to={`/order/${order.id}`}>Ver Detalhes</ViewDetailsButton>
+                  <OrderActions>
+                    <ViewDetailsButton to={`/order/${order.id}`}>Ver Detalhes</ViewDetailsButton>
+                    {canCancelOrder(order.status) && (
+                      <CancelButton 
+                        onClick={() => handleCancelOrder(order.id)}
+                        disabled={cancellingOrderId === order.id}
+                      >
+                        {cancellingOrderId === order.id ? 'Cancelando...' : 'Cancelar'}
+                      </CancelButton>
+                    )}
+                  </OrderActions>
                 </OrderSummary>
               </OrderContent>
             </OrderCard>

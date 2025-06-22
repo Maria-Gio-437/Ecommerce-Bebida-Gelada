@@ -10,18 +10,30 @@ class UserController:
     def register(self):
         try:
             data = request.get_json()
+            print(f"Dados recebidos: {data}")
+            
             required_fields = ['nome', 'email', 'senha', 'cpf', 'telefone', 'data_nascimento', 'tipo_usuario']
             if not all(field in data for field in required_fields):
-                return jsonify({'error': 'Todos os campos são obrigatórios'}), 400
+                missing_fields = [field for field in required_fields if field not in data]
+                print(f"Campos ausentes: {missing_fields}")
+                return jsonify({'error': 'Todos os campos são obrigatórios', 'missing_fields': missing_fields}), 400
 
+            print("Criando DTO...")
             user_dto = CreateUserDTO(**data)
+            print("DTO criado com sucesso")
+            
+            print("Chamando user_service.create_user...")
             new_user = self.user_service.create_user(user_dto)
+            print(f"Usuário criado: {new_user}")
             
             if 'senha' in new_user:
                 del new_user['senha']
 
             return jsonify({'message': 'Usuário criado com sucesso', 'user': new_user}), 201
         except Exception as e:
+            print(f"Erro no registro: {str(e)}")
+            import traceback
+            traceback.print_exc()
             return jsonify({'error': str(e)}), 400
 
     def login(self):
@@ -49,7 +61,15 @@ class UserController:
                     del user['senha']
             return jsonify(users), 200
         except Exception as e:
-            return jsonify({'error': f'Ocorreu um erro: {str(e)}'}), 500
+            return jsonify({'error': str(e)}), 500
+    
+    def logout(self):
+        try:
+            # Em uma implementação real, você invalidaria o token aqui
+            # Por enquanto, apenas retornamos sucesso
+            return jsonify({'message': 'Logout realizado com sucesso'}), 200
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
         
     def forgot_password(self):
         data = request.get_json()

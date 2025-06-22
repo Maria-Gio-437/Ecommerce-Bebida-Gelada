@@ -17,6 +17,10 @@ def login():
 def get_all_users():
     return user_controller_instance.get_all_users()
 
+@user_routes.route('/logout', methods=['POST'])
+def logout():
+    return user_controller_instance.logout()
+
 @user_routes.route('/forgot-password', methods=['POST'])
 def forgot_password():
     return user_controller_instance.forgot_password()

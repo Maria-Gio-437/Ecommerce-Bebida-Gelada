@@ -50,8 +50,6 @@ export const ProductProvider: React.FC<ProductProviderProps> = ({ children }) =>
     const fetchProducts = async () => {
       setIsLoading(true);
       try {
-        // Em um ambiente real, isso seria uma chamada à API
-        // Simulando uma chamada à API com dados mockados
         const mockProducts: Product[] = [
           {
             id: 1,
@@ -59,64 +57,112 @@ export const ProductProvider: React.FC<ProductProviderProps> = ({ children }) =>
             price: 8.90,
             category: 1,
             alcoholic: true,
-            image: '/images/cerveja-pilsen.jpg'
+            image: 'https://images.unsplash.com/photo-1608270586620-248524c67de9?w=400&h=400&fit=crop&crop=center'
           },
           {
             id: 2,
-            name: 'Cerveja IPA',
+            name: 'Cerveja IPA Artesanal',
             price: 12.90,
             category: 1,
             alcoholic: true,
-            image: '/images/cerveja-ipa.jpg'
+            image: 'https://images.unsplash.com/photo-1535958636474-b021ee887b13?w=400&h=400&fit=crop&crop=center'
           },
           {
             id: 3,
-            name: 'Whisky 12 anos',
-            price: 120.00,
-            category: 2,
+            name: 'Cerveja',
+            price: 10.50,
+            category: 1,
             alcoholic: true,
-            image: '/images/whisky.jpg'
+            image: 'https://images.unsplash.com/photo-1618885472179-5e474019f2a9?w=400&h=400&fit=crop&crop=center'
           },
           {
             id: 4,
-            name: 'Vinho Tinto',
-            price: 45.90,
-            category: 3,
+            name: 'Whisky 12 Anos',
+            price: 120.00,
+            category: 2,
             alcoholic: true,
-            image: '/images/vinho-tinto.jpg'
+            image: 'https://images.unsplash.com/photo-1569529465841-dfecdab7503b?w=400&h=400&fit=crop&crop=center'
           },
           {
             id: 5,
-            name: 'Refrigerante Cola',
-            price: 6.50,
-            category: 4,
-            alcoholic: false,
-            image: '/images/refrigerante-cola.jpg'
+            name: 'Vodka',
+            price: 85.00,
+            category: 2,
+            alcoholic: true,
+            image: 'https://images.unsplash.com/photo-1551538827-9c037cb4f32a?w=400&h=400&fit=crop&crop=center'
           },
           {
             id: 6,
-            name: 'Água Mineral',
-            price: 3.50,
-            category: 4,
-            alcoholic: false,
-            image: '/images/agua-mineral.jpg'
+            name: 'Gin',
+            price: 95.00,
+            category: 2,
+            alcoholic: true,
+            image: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=400&h=400&fit=crop&crop=center'
           },
           {
             id: 7,
-            name: 'Suco de Laranja',
-            price: 7.90,
-            category: 4,
-            alcoholic: false,
-            image: '/images/suco-laranja.jpg'
+            name: 'Vinho Tinto Reserva',
+            price: 45.90,
+            category: 3,
+            alcoholic: true,
+            image: 'https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=400&h=400&fit=crop&crop=center'
           },
           {
             id: 8,
-            name: 'Energético',
-            price: 9.90,
+            name: 'Vinho Branco Seco',
+            price: 42.50,
+            category: 3,
+            alcoholic: true,
+            image: 'https://images.unsplash.com/photo-1547595628-c61a29f496f0?w=400&h=400&fit=crop&crop=center'
+          },
+          {
+            id: 9,
+            name: 'Champagne',
+            price: 89.90,
+            category: 3,
+            alcoholic: true,
+            image: 'https://d1zvfmhlebc91g.cloudfront.net/fit-in/456x751/filters:fill(ffffff)/filters:background_color(ffffff)/filters:quality(100)/n49shopv2_boccatispa/images/products/646fc0688d1b7/12205_espumante_chandon_reserve_brut_750ml-646fc068deea6.jpg'
+          },
+          {
+            id: 10,
+            name: 'Suco Natural de Laranja',
+            price: 7.90,
             category: 4,
             alcoholic: false,
-            image: '/images/energetico.jpg'
+            image: 'https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=400&h=400&fit=crop&crop=center'
           },
+          {
+            id: 11,
+            name: 'Água Mineral',
+            price: 2.50,
+            category: 4,
+            alcoholic: false,
+            image: 'https://ibassets.com.br/ib.item.image.big/b-aacc52e5cb9c4b49b872a48fa0530b9c.jpeg'
+          },
+          {
+            id: 14,
+            name: 'Energético',
+            price: 6.90,
+            category: 4,
+            alcoholic: false,
+            image: 'https://images.unsplash.com/photo-1622543925917-763c34d1a86e?w=400&h=400&fit=crop&crop=center'
+          },
+          {
+            id: 15,
+            name: 'Água de Coco',
+            price: 4.50,
+            category: 4,
+            alcoholic: false,
+            image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsIq7klYivhx-yq9tKS90ak3Zmz3EB9XF05w&s'
+          },
+          {
+            id: 16,
+            name: 'Chá Gelado Limão',
+            price: 6.90,
+            category: 4,
+            alcoholic: false,
+            image: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=400&h=400&fit=crop&crop=center'
+          }
         ];
         
         setAllProducts(mockProducts);
@@ -141,7 +187,8 @@ export const ProductProvider: React.FC<ProductProviderProps> = ({ children }) =>
       case 'cervejas': categoryId = 1; break;
       case 'destilados': categoryId = 2; break;
       case 'vinhos': categoryId = 3; break;
-      case 'sem álcool': categoryId = 4; break;
+      case 'sem álcool':
+      case 'sem-alcool': categoryId = 4; break;
       default: return [];
     }
     

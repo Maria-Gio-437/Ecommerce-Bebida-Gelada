@@ -27,15 +27,15 @@ const LoginPromptText = styled.p`
 const LoginButton = styled(Link)`
   display: inline-block;
   padding: 10px 20px;
-  background-color: #4CAF50;
+  background: linear-gradient(135deg, #38a169, #48bb78);
   color: white;
   text-decoration: none;
   border-radius: 4px;
   font-weight: bold;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
   
   &:hover {
-    background-color: #45a049;
+    background: linear-gradient(135deg, #2f855a, #38a169);
   }
 `;
 

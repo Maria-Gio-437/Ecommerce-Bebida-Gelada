@@ -36,9 +36,20 @@ const CategoryPage: React.FC = () => {
   
   const products = categoryName ? getProductsByCategory(categoryName) : [];
   
+  // Função para formatar o nome da categoria
+  const formatCategoryName = (name: string) => {
+    switch(name?.toLowerCase()) {
+      case 'cervejas': return 'Cervejas';
+      case 'destilados': return 'Destilados';
+      case 'vinhos': return 'Vinhos';
+      case 'sem-alcool': return 'Sem Alcool';
+      default: return name || 'Categoria';
+    }
+  };
+  
   return (
     <Container>
-      <Title>{categoryName}</Title>
+      <Title>{formatCategoryName(categoryName || '')}</Title>
       
       {products.length > 0 ? (
         <ProductGrid>

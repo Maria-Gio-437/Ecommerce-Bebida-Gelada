@@ -51,16 +51,16 @@ const ButtonContainer = styled.div`
 const Button = styled(Link)<{ primary?: boolean }>`
   display: inline-block;
   padding: 12px 24px;
-  background-color: ${props => props.primary ? '#4CAF50' : '#f8f8f8'};
+  background: ${props => props.primary ? 'linear-gradient(135deg, #38a169, #48bb78)' : '#f8f8f8'};
   color: ${props => props.primary ? 'white' : '#333'};
   text-decoration: none;
   border-radius: 4px;
   font-weight: bold;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
   border: ${props => props.primary ? 'none' : '1px solid #ddd'};
   
   &:hover {
-    background-color: ${props => props.primary ? '#45a049' : '#e0e0e0'};
+    background: ${props => props.primary ? 'linear-gradient(135deg, #2f855a, #38a169)' : '#e0e0e0'};
   }
 `;
 

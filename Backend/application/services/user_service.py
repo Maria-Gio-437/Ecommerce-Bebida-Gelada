@@ -3,6 +3,7 @@ from application.dtos.create_user_dto import CreateUserDTO
 from application.dtos.login_dto import LoginDTO
 from persistence.repositories.user_repository import UserRepository
 from werkzeug.security import generate_password_hash
+from config.database import supabase
 
 class UserService:
     def __init__(self):

@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 interface User {
   id: number;
@@ -11,7 +11,7 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<boolean>;
-  logout: () => void;
+  logout: () => Promise<void>;
   register: (name: string, email: string, password: string, birthDate: Date) => Promise<boolean>;
 }
 
@@ -42,18 +42,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
-      // Simulação de login - em um ambiente real, isso seria uma chamada à API
-      // Verificando se é um email de teste
-      if (email === 'teste@email.com' && password === 'senha123') {
+      const response = await fetch('http://127.0.0.1:5000/users/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, senha: password }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
         const user = {
-          id: 1,
-          name: 'Usuário Teste',
-          email: 'teste@email.com',
+          id: data.user?.id || 1,
+          name: data.user?.user_metadata?.nome || data.user?.email || 'Usuário',
+          email: data.user?.email || email,
           isAdult: true
         };
         
         setUser(user);
         localStorage.setItem('user', JSON.stringify(user));
+        localStorage.setItem('authToken', data.session?.access_token || '');
         return true;
       }
       return false;
@@ -63,32 +71,73 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
   
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('user');
+  const logout = async () => {
+    try {
+      const authToken = localStorage.getItem('authToken');
+      if (authToken) {
+        await fetch('http://127.0.0.1:5000/users/logout', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          },
+        });
+      }
+    } catch (error) {
+      console.error('Erro ao fazer logout no servidor:', error);
+    } finally {
+      setUser(null);
+      localStorage.removeItem('user');
+      localStorage.removeItem('authToken');
+    }
   };
   
   const register = async (name: string, email: string, password: string, birthDate: Date): Promise<boolean> => {
     try {
-      // Verificar se o usuário é maior de idade
+      // Calcular se o usuário é maior de idade
       const today = new Date();
       const age = today.getFullYear() - birthDate.getFullYear();
       const isAdult = age >= 18;
       
-      // Simulação de registro - em um ambiente real, isso seria uma chamada à API
-      const user = {
-        id: Math.floor(Math.random() * 1000),
-        name,
-        email,
-        isAdult
-      };
-      
-      setUser(user);
-      localStorage.setItem('user', JSON.stringify(user));
-      return true;
+      const response = await fetch('http://127.0.0.1:5000/users/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          nome: name,
+          email,
+          senha: password,
+          cpf: '00000000000', // Valor padrão - pode ser ajustado conforme necessário
+          telefone: '0000000000', // Valor padrão - pode ser ajustado conforme necessário
+          data_nascimento: birthDate.toISOString().split('T')[0],
+          tipo_usuario: 'cliente'
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const user = {
+          id: data.user?.id || Math.floor(Math.random() * 1000),
+          name,
+          email,
+          isAdult
+        };
+        
+        setUser(user);
+        localStorage.setItem('user', JSON.stringify(user));
+        return true;
+      } else {
+        // Tentar obter a mensagem de erro do servidor
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.error || 'Erro desconhecido no servidor';
+        console.error('Erro do servidor:', errorMessage);
+        throw new Error(errorMessage);
+      }
     } catch (error) {
       console.error('Erro ao registrar:', error);
-      return false;
+      // Re-lançar o erro para que possa ser capturado na UI
+      throw error;
     }
   };
   

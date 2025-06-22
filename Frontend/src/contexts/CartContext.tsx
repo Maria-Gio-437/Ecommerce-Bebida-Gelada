@@ -10,6 +10,9 @@ interface CartContextType {
   clearCart: () => void;
   totalItems: number;
   totalPrice: number;
+  subtotal: number;
+  shipping: number;
+  hasDiscount: boolean;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -85,7 +88,10 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   
   const totalItems = items.reduce((total, item) => total + item.quantity, 0);
   
-  const totalPrice = items.reduce((total, item) => total + (item.price * item.quantity), 0);
+  const subtotal = items.reduce((total, item) => total + (item.price * item.quantity), 0);
+  const shipping = subtotal > 0 ? 10 : 0; // Frete fixo de R$ 10
+  const hasDiscount = false;
+  const totalPrice = subtotal + shipping;
   
   const value = {
     items,
@@ -94,7 +100,10 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     updateQuantity,
     clearCart,
     totalItems,
-    totalPrice
+    totalPrice,
+    subtotal,
+    shipping,
+    hasDiscount
   };
   
   return (
