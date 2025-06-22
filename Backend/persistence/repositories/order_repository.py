@@ -54,9 +54,6 @@ class OrderRepository:
             itens_response = supabase.table('pedido_itens').insert(itens_pedido_data).execute()
 
             if not itens_response.data:
-                # Idealmente, aqui deveria haver um rollback do pedido criado.
-                # Como o Supabase-py não tem transações explícitas, essa é uma limitação.
-                # A melhor prática seria criar uma Function no PostgreSQL para garantir a atomicidade.
                 raise Exception("Falha ao registrar os itens do pedido.")
 
             # Atualizar o estoque dos produtos
@@ -66,14 +63,12 @@ class OrderRepository:
                 supabase.table('produtos').update({'qtd_estoque': novo_estoque}).eq('id', item.produto_id).execute()
             
             # Retornar o pedido completo para o cliente
-            # Adicionamos os itens ao objeto do pedido para retornar uma resposta completa
             novo_pedido['itens'] = itens_response.data
             return novo_pedido
 
         except Exception as e:
-            # Propaga a exceção para ser tratada pela camada de serviço/controller
             raise e
-        
+
     def get_by_id(self, order_id: str):
         try:
             # Busca o pedido e faz o join com itens e produtos
@@ -98,5 +93,35 @@ class OrderRepository:
             query = "*, cliente:cliente_id(nome, email), pedido_itens(*, produtos(nome))"
             response = supabase.table('pedidos').select(query).order('data_pedido', desc=True).execute()
             return response.data
+        except Exception as e:
+            raise e
+            
+    def update_status(self, order_id: str, new_status: str):
+        try:
+            # Se o pedido for cancelado, restaura o estoque
+            if new_status == 'cancelado':
+                # 1. Busca os itens do pedido
+                itens_response = supabase.table('pedido_itens').select('produto_id, quantidade').eq('pedido_id', order_id).execute()
+                
+                if not itens_response.data:
+                    raise Exception("Itens do pedido não encontrados para restauração de estoque.")
+                
+                # 2. Para cada item, devolve a quantidade ao estoque do produto
+                for item in itens_response.data:
+                    # Pega o estoque atual do produto
+                    produto_response = supabase.table('produtos').select('qtd_estoque').eq('id', item['produto_id']).single().execute()
+                    estoque_atual = produto_response.data['qtd_estoque']
+                    
+                    # Calcula o novo estoque e atualiza
+                    novo_estoque = estoque_atual + item['quantidade']
+                    supabase.table('produtos').update({'qtd_estoque': novo_estoque}).eq('id', item['produto_id']).execute()
+
+            # 3. Atualiza o status do pedido
+            response = supabase.table('pedidos').update({'status': new_status}).eq('id', order_id).execute()
+            
+            if not response.data:
+                raise Exception("Falha ao atualizar o status do pedido.")
+            
+            return response.data[0]
         except Exception as e:
             raise e
